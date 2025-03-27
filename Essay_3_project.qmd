@@ -6,7 +6,7 @@ editor: visual
 
 # Project Name
 
-## Preston O'Connor
+## Preston O'Connor, Khoa Dao
 
 ### 4/1/2025
 
@@ -17,12 +17,43 @@ editor: visual
 library(tidyverse)
 library(GGally)
 library(broom)
+library(ggplot2)
+library(corrplot)
+library(dplyr)
 
 data <- read_csv("diabetes_prediction_dataset.csv")
 head(data)
 ```
 
 ### Data Description
+
+The dataset used for this analysis is the **Diabetes Prediction Dataset**, sourced from Kaggle (<https://www.kaggle.com/datasets/iammustafatz/diabetes-prediction-dataset/data>). This dataset contains several health-related features to predict the likelihood of diabetes. Below is a detailed description of the data structure, variable introductions, data size, and initial data cleaning process.
+
+#### Data Structure:
+
+The dataset consists of rows and columns, where each row corresponds to an individual, and the columns represent different health-related variables. The key variables (features) in the dataset are:
+
+-   `age`: Age of the patient.
+
+-   `gender`: Gender of the patient (binary variable: Male/Female).
+
+-   `bmi`: Body mass index (weight in kg / height in m²).
+
+-   `hypertension`: Whether the individual has hypertension (binary variable: 1 for yes, 0 for no).
+
+-   `heart_disease`: Whether the individual has a history of heart disease (binary variable: 1 for yes, 0 for no).
+
+-   `smoking_history`: History of smoking (binary variable: 1 for smoker, 0 for non-smoker).
+
+-   `HbA1c_level`: Hemoglobin A1c percentage, a measure of blood glucose control over time.
+
+-   `blood_glucose_level`: Blood glucose concentration (mg/dL).
+
+-   `diabetes`: The target variable indicating whether the individual has diabetes (1) or not (0).
+
+#### Data Size
+
+The dataset originally contains 100,000 observations and 9 variables.
 
 ```{r}
 
@@ -33,9 +64,9 @@ summary(continuous)
 
 Hypertension, heart_disease, diabetes are all categorical. There is no need to standardize these values. We will standardize the rest of the following available categories
 
-```{r}
-# Clean and filter the data
+#### Data Cleaning
 
+```{r}
 #cleaned our continuous variables
 remove_outliers <- function(col) {
   top_one_percent <- quantile(col, 0.99)
@@ -59,6 +90,116 @@ cleaned_data <- data %>%
   mutate(across(where(is.numeric), normalize_features))
 
 cleaned_data
+```
+
+```{r}
+# Handle outliers: Remove rows where BMI/BloodGlucose/HbA1c/Age are outliers (beyond 1.5 * IQR)
+# Function to remove outliers beyond 1.5 * IQR
+remove_outliers_IQR <- function(df, column) {
+  Q1 <- quantile(df[[column]], 0.25, na.rm = T)
+  Q3 <- quantile(df[[column]], 0.75, na.rm = T)
+  IQR <- Q3 - Q1
+  lower_bound <- Q1 - 1.5 * IQR
+  upper_bound <- Q3 + 1.5 * IQR
+  df %>% filter(df[[column]] >= lower_bound & df[[column]] <= upper_bound)
+}
+
+# Remove outliers for Age, BMI, BloodGlucose, and HbA1c using the custom function
+cleaned_data <- cleaned_data %>%
+  remove_outliers_IQR("age") %>%
+  remove_outliers_IQR("bmi") %>%
+  remove_outliers_IQR("blood_glucose_level") %>%
+  remove_outliers_IQR("HbA1c_level")
+
+summary(cleaned_data)
+```
+
+#### Data Visualization
+
+```{r}
+# Histogram for Age, BMI, BloodGlucose, and HbA1c
+ggplot(cleaned_data, aes(x = age)) + 
+  geom_histogram(binwidth = 0.075, fill = "blue", color = "black") +
+  theme_minimal() + 
+  labs(title = "Age Distribution")
+
+
+ggplot(cleaned_data, aes(x = bmi)) + 
+  geom_histogram(binwidth = 0.075, fill = "green", color = "black") + 
+  theme_minimal() + 
+  labs(title = "BMI Distribution")
+
+
+ggplot(cleaned_data, aes(x = blood_glucose_level)) + 
+  geom_histogram(binwidth = 0.15, fill = "red", color = "black") +
+  theme_minimal() + 
+  labs(title = "Blood Glucose Distribution")
+
+
+ggplot(cleaned_data, aes(x = HbA1c_level)) + 
+  geom_histogram(binwidth = 0.15, fill = "purple", color = "black") + 
+  theme_minimal() + 
+  labs(title = "HbA1c Distribution")
+```
+
+```{r}
+# Boxplot for Age
+boxplot(cleaned_data$age, 
+        main = "Boxplot of Age", 
+        ylab = "Age", 
+        col = "blue", 
+        border = "black", 
+        horizontal = FALSE)
+
+# Boxplot for BMI
+boxplot(cleaned_data$bmi, 
+        main = "Boxplot of BMI", 
+        ylab = "BMI", 
+        col = "green", 
+        border = "black", 
+        horizontal = FALSE) 
+
+# Boxplot for BloodGlucose
+boxplot(cleaned_data$blood_glucose_level, 
+        main = "Boxplot of Blood Glucose", 
+        ylab = "Blood Glucose (mg/dL)", 
+        col = "red", 
+        border = "black", 
+        horizontal = FALSE) 
+
+# Boxplot for HbA1c
+boxplot(cleaned_data$HbA1c_level, 
+        main = "Boxplot of HbA1c", 
+        ylab = "HbA1c (%)", 
+        col = "purple", 
+        border = "black", 
+        horizontal = FALSE) 
+```
+
+```{r}
+# Bar plot for Hypertension
+ggplot(cleaned_data, aes(x = factor(hypertension))) +
+  geom_bar(fill = "lightblue", color = "black") +
+  labs(title = "Hypertension Distribution", x = "Hypertension (0 = No, 1 = Yes)", y = "Count") +
+  theme_minimal()
+
+# Bar plot for HeartDisease
+ggplot(cleaned_data, aes(x = factor(heart_disease))) +
+  geom_bar(fill = "lightgreen", color = "black") +
+  labs(title = "Heart Disease History Distribution", x = "Heart Disease (0 = No, 1 = Yes)", y = "Count") +
+  theme_minimal()
+
+# Bar plot for SmokingHistory
+ggplot(cleaned_data, aes(x = factor(smoking_history))) +
+  geom_bar(fill = "lightcoral", color = "black") +
+  labs(title = "Smoking History Distribution", x = "Smoking History (0 = Non-Smoker, 1 = Smoker)", y = "Count") +
+  theme_minimal()
+
+# Bar plot for Diabetes
+ggplot(cleaned_data, aes(x = factor(diabetes))) +
+  geom_bar(fill = "lightgrey", color = "black") +
+  labs(title = "Diabetes Distribution", x = "Diabetes (0 = No Diabetes, 1 = Diabetes)", y = "Count") +
+  theme_minimal()
 ```
 
 ### Analysis
@@ -149,7 +290,7 @@ ac <- mean(glm_pred == data_test$diabetes)
 tidy(glm_fit)
 ```
 
-##### Assess Model Performance 
+##### Assess Model Performance
 
 confusion matrixes for the next two
 
