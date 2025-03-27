@@ -1,0 +1,233 @@
+---
+title: "Untitled"
+format: pdf
+editor: visual
+---
+
+# Project Name
+
+## Authors:
+
+### 3/26/2025
+
+### Introduction
+
+```{r}
+# Upload the code pacakges here
+library(tidyverse)
+library(GGally)
+library(broom)
+
+data <- read_csv("diabetes_prediction_dataset.csv")
+head(data)
+```
+
+### Data Description
+
+```{r}
+
+continuous <- data %>% 
+  select(where(is.numeric))
+summary(continuous)
+```
+
+Hypertension, heart_disease, diabetes are all categorical. There is no need to standardize these values. We will standardize the rest of the following available categories
+
+```{r}
+# Clean and filter the data
+
+#cleaned our continuous variables
+remove_outliers <- function(col) {
+  top_one_percent <- quantile(col, 0.99)
+
+  col[col >= top_one_percent] <- NA  # Replace outliers with NA
+  return(col)
+}
+
+# normalize all of the columns with integers
+normalize_features <- function(col) {
+  col_min <- min(col, na.rm = TRUE)
+  col_max <- max(col, na.rm = TRUE)
+  
+  return((col - col_min) / (col_max - col_min))
+}
+
+cleaned_data <- data %>% 
+  mutate(across(c(gender, smoking_history, hypertension, heart_disease, diabetes), as_factor), 
+         across(where(is.numeric), remove_outliers)) %>% 
+  filter(if_all(where(is.numeric), \(col) !is.na(col))) %>% 
+  mutate(across(where(is.numeric), normalize_features))
+
+cleaned_data
+```
+
+### Analysis
+
+##### Continuous variables
+
+```{r}
+continuous <- cleaned_data %>% 
+  select(where(is.numeric))
+summary(continuous)
+```
+
+##### Factor Variables
+
+```{r}
+cleaned_data %>%
+  summarize(across(where(is.factor), n_distinct)) %>% 
+  pivot_longer(cols = everything(), names_to = "variable", values_to = "count") %>% 
+  ggplot(aes(x = variable, y = count)) +
+  geom_bar(stat = "identity")
+    
+
+```
+
+From the graph above, we can see that smoking history has 6 levels. This is somewhat substantial, and some levels have relatively low number of observations.
+
+##### Feature Engineering
+
+```{r}
+cleaned_data %>% 
+  count(smoking_history)
+
+
+```
+
+##### Summary Statistic
+
+```{r}
+cleaned_data %>% 
+  count(diabetes) %>% 
+  ggplot(aes(x = diabetes, y = n))+
+  geom_bar(stat = "identity")
+```
+
+There is an extreme imbalance in the range of the distribution
+
+```{r}
+#| fig-width: 10
+#| fig-height: 10
+
+cleaned_data %>% 
+  sample_n(size = 100) %>% 
+  ggpairs(columns = 1:ncol(cleaned_data), diag = "blankDiag", upper = list(continuous = "points"))
+```
+
+##### Train/Test & Building Model
+
+```{r}
+set.seed(1234)
+
+create_train_test <- function(data, size = 0.8, train = TRUE) {
+  n_row = nrow(data)
+  total_row = size * n_row
+  train_sample <- 1: total_row
+  if (train == TRUE) {
+    return (data[train_sample, ])
+  } else {
+    return (data[-train_sample, ])
+    mean(glm_pred == as.character(testing$diabetes))
+  }
+}
+
+data_train <- create_train_test(cleaned_data, 0.7, train = TRUE)
+data_test <- create_train_test(cleaned_data, 0.7, train = FALSE)
+dim(data_train)
+
+
+glm_fit <- glm(diabetes ~ ., data = data_train, family = "binomial")
+predictions <- predict(glm_fit, newdata = data_test, type = "response")
+glm_pred <- rep("0", nrow(data_test))
+glm_pred[predictions > 0.5] = "1"
+
+table(glm_pred)
+table(data_test$diabetes)
+# for the accuracy mentioned further down in reference
+ac <- mean(glm_pred == data_test$diabetes)
+
+tidy(glm_fit)
+```
+
+##### Assess Model Performance 
+
+confusion matrixes for the next two
+
+```{r}
+summary(glm_fit)
+```
+
+```{r}
+table(glm_pred, data_test$diabetes)
+```
+
+#### Null Model
+
+```{r}
+null_model <- glm(diabetes ~ 1, data = data_train, family = "binomial")
+
+# Check the summary of the null model
+summary(null_model)
+```
+
+#### Our Model
+
+```{r}
+summary(glm_fit)
+```
+
+Residual deviance is less than the Null deviance which indicate significant improvements in the model
+
+#### Model Comparison with Reduction in deviance
+
+```{r}
+anova(glm_fit, test = "Chisq")
+```
+
+### Application to GLM
+
+##### BIC
+
+```{r}
+bic_value <- BIC(glm_fit)
+print(paste("BIC:", bic_value))
+```
+
+#### 
+
+### Model evaluation and predictions
+
+##### Model Accuracy
+
+```{r}
+# model Accuracy (Full model due to no need for feature selection)
+mean(glm_pred == data_test$diabetes)
+# model Accuracy of the NULL
+mean(null_model == data_test$diabetes)
+```
+
+#### likelihood Ratio Test:
+
+```{r}
+anova(null_model, glm_fit, test = "Chisq")
+```
+
+#### AIC/BIC for model comparison
+
+```{r}
+
+```
+
+#### Pseudo R-Squared
+
+```{r}
+null_logLik <- logLik(null_model)
+
+full_logLik <- logLik(glm_fit)
+
+# McFadden's Pseudo R-squared
+pseudo_r2 <- 1 - (as.numeric(full_logLik) / as.numeric(null_logLik))
+print(paste("Pseudo R-squared:", pseudo_r2))
+```
+
+### Conclusion/Summary
