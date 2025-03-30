@@ -18,7 +18,7 @@ library(tidyverse)
 library(GGally)
 library(broom)
 library(ggplot2)
-library(corrplot)
+#library(corrplot) uncomment
 library(dplyr)
 
 data <- read_csv("diabetes_prediction_dataset.csv")
@@ -224,7 +224,7 @@ cleaned_data %>%
 
 ```
 
-From the graph above, we can see that smoking history has 6 levels. This is somewhat substantial, and some levels have relatively low number of observations.
+From the graph above, we can see that smoking history has 6 levels. This is somewhat substantial, and some levels have relatively low number of observations. These are some values to take notice for the model to see
 
 ##### Feature Engineering
 
@@ -235,6 +235,8 @@ cleaned_data %>%
 
 ```
 
+Here we can see that evne if we wanted to remove the no info form our data set there is a substantial amount of points that may contribute to our models variance.
+
 ##### Summary Statistic
 
 ```{r}
@@ -244,7 +246,7 @@ cleaned_data %>%
   geom_bar(stat = "identity")
 ```
 
-There is an extreme imbalance in the range of the distribution
+There is an extreme imbalance in the range of the distribution this is something to be aware of for our model implementiation and to take note of if there are any issues in our implementation.
 
 ```{r}
 #| fig-width: 10
@@ -302,6 +304,10 @@ summary(glm_fit)
 table(glm_pred, data_test$diabetes)
 ```
 
+The model is 96.4% accurate, which means it is right about most cases. However, its precision is only 37.4%, i.e., it often predicts diabetes when there isn't. The recall is 78.1%, which means that it correctly classifies most actual cases of diabetes but occasionally gets them wrong. While the model is fairly accurate, its low precision suggests that it may not be very effective in avoiding false positives.
+
+#### Notice in the above many of our smoking values have a high p value. We will factor those out to see if there is model improvement when we exclude those factors
+
 #### Null Model
 
 ```{r}
@@ -314,10 +320,21 @@ summary(null_model)
 #### Our Model
 
 ```{r}
+coefs <- coef(glm_fit)
+equation <- paste0("Logit(P(Y=1)) = ", round(coefs[1], 3), " + ", 
+                   paste(names(coefs[-1]), round(coefs[-1], 3), sep = " * ", collapse = " + "))
+equation
+```
+
+$$
+\log \left( \frac{P(Y=1)}{1 - P(Y=1)} \right) = -15.416 + 0.223 \cdot \text{genderMale} - 9.779 \cdot \text{genderOther} + 3.739 \cdot \text{age} + 0.759 \cdot \text{hypertension1} + 0.87 \cdot \text{heart_disease1} - 0.502 \cdot \text{smoking\_historyNo\_Info} + 0.112 \cdot \text{smoking_historycurrent} + 0.135 \cdot \text{smoking_historyformer} + 0.153 \cdot \text{smoking_historyever} - 0.044 \cdot \text{smoking_historynot_current} + 4.109 \cdot \text{bmi} + 11.072 \cdot \text{HbA1c\_level} + 4.824 \cdot \text{blood\_glucose\_level}
+$$
+
+```{r}
 summary(glm_fit)
 ```
 
-Residual deviance is less than the Null deviance which indicate significant improvements in the model
+The logistic regression mode shows a significant reduction in deviation from 22169, found from our null, to the 11961 in our residual deviance. This showcases the the predictors variable contribute meaningful explanations for the output. The AIC of 11989 suggest a reasonable ballance between the models complexity and fit. The model converged in 12 fisher scoring iteration, showcasing stable parameter estimation. These metric indicated the this is a well fitting model however, we can continue to asses
 
 #### Model Comparison with Reduction in deviance
 
@@ -332,9 +349,10 @@ anova(glm_fit, test = "Chisq")
 ```{r}
 bic_value <- BIC(glm_fit)
 print(paste("BIC:", bic_value))
+
 ```
 
-#### 
+assesses model fit while penalizing the complexity, where lower values indicate a good balance between accuracy and parsimony. If BIC decreased after removing unnecessary variables, the model is likely more efficient without decreasing the predictability. If BIC increased, significant predictors may have been removed, and the model may need to be re-checked on feature selection.
 
 ### Model evaluation and predictions
 
