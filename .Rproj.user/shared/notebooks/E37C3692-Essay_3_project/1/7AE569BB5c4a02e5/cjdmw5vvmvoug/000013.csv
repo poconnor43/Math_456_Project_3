@@ -1,0 +1,6 @@
+"0",""
+"0",""
+"0","ggplot(cleaned_data, aes(x = blood_glucose_level)) + "
+"0","  geom_histogram(binwidth = 0.15, fill = ""red"", color = ""black"") +"
+"0","  theme_minimal() + "
+"0","  labs(title = ""Blood Glucose Distribution"")"

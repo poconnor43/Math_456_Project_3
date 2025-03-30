@@ -1,0 +1,8 @@
+"0",""
+"0","# Boxplot for BloodGlucose"
+"0","boxplot(cleaned_data$blood_glucose_level, "
+"0","        main = ""Boxplot of Blood Glucose"", "
+"0","        ylab = ""Blood Glucose (mg/dL)"", "
+"0","        col = ""red"", "
+"0","        border = ""black"", "
+"0","        horizontal = FALSE) "

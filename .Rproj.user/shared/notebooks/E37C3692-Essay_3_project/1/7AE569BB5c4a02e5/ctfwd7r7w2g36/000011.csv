@@ -1,0 +1,8 @@
+"0",""
+"0","# Boxplot for BMI"
+"0","boxplot(cleaned_data$bmi, "
+"0","        main = ""Boxplot of BMI"", "
+"0","        ylab = ""BMI"", "
+"0","        col = ""green"", "
+"0","        border = ""black"", "
+"0","        horizontal = FALSE) "

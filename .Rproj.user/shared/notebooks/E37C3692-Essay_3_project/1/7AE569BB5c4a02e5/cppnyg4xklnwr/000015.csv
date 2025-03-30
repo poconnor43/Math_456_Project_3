@@ -1,0 +1,6 @@
+"0",""
+"0","# Bar plot for Diabetes"
+"0","ggplot(cleaned_data, aes(x = factor(diabetes))) +"
+"0","  geom_bar(fill = ""lightgrey"", color = ""black"") +"
+"0","  labs(title = ""Diabetes Distribution"", x = ""Diabetes (0 = No Diabetes, 1 = Diabetes)"", y = ""Count"") +"
+"0","  theme_minimal()"

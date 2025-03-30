@@ -1,0 +1,4 @@
+"0","cleaned_data %>% "
+"0","  count(diabetes) %>% "
+"0","  ggplot(aes(x = diabetes, y = n))+"
+"0","  geom_bar(stat = ""identity"")"
