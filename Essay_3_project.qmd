@@ -390,3 +390,9 @@ print(paste("Pseudo R-squared:", pseudo_r2))
 ```
 
 ### Conclusion/Summary
+
+
+
+
+
+### References 
