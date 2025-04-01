@@ -400,9 +400,13 @@ print(paste("Pseudo R-squared:", pseudo_r2))
 
 ### Conclusion/Summary
 
+
+
 ### References
+Kassambara, Thanos, Kassambara, & Sfd. (2018, March 11). Logistic Regression Essentials in R. STHDA. http://www.sthda.com/english/articles/36-classification-methods-essentials/151-logistic-regression-essentials-in-r/#:%7E:text=The%20R%20function%20glm(),want%20to%20fit%20logistic%20regression 
 
-Marx, Jean. “Unraveling the Causes of Diabetes.” Science 296, no. 5568 (2002): 686–89. http://www.jstor.org/stable/3076573.
+Marx, J. (2002). Unraveling the Causes of Diabetes. Science 296, 5568. http://www.jstor.org/stable/3076573
 
-\
-Robinson, Matthew, and Caroline Turner. “Incidence and Prevalence of Type 2 Diabetes in America: Is There Culpability in the Food Industry?” State Crime Journal 8, no. 2 (2019): 175–218. https://doi.org/10.13169/statecrime.8.2.0175.
+Robinson, M., & Turner, C. (2019). Incidence and prevalence of type 2 diabetes in America: Is there culpability in the food industry? State Crime Journal, 8(2). https://doi.org/10.13169/statecrime.8.2.0175 
+
+Soga. SOGA •. (2016, August 30). https://www.geo.fu-berlin.de/en/v/soga/Basics-of-statistics/Logistic-Regression/Logistic-Regression-in-R---An-Example/index.html 
