@@ -1,6 +1,0 @@
-"0","#| fig-width: 10"
-"0","#| fig-height: 10"
-"0",""
-"0","cleaned_data %>% "
-"0","  sample_n(size = 100) %>% "
-"0","  ggpairs(columns = 1:ncol(cleaned_data), diag = ""blankDiag"", upper = list(continuous = ""points""))"

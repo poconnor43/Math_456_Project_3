@@ -1,8 +1,0 @@
-"0",""
-"0","# Boxplot for HbA1c"
-"0","boxplot(cleaned_data$HbA1c_level, "
-"0","        main = ""Boxplot of HbA1c"", "
-"0","        ylab = ""HbA1c (%)"", "
-"0","        col = ""purple"", "
-"0","        border = ""black"", "
-"0","        horizontal = FALSE) "

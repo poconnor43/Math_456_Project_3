@@ -6,11 +6,17 @@ editor: visual
 
 # Project Name
 
-## Preston O'Connor, Khoa Dao
+## Preston O'Connor, Khoa Dao, Anthony Yasan
 
 ### 4/1/2025
 
 ### Introduction
+
+The model predicts the incidence of diabetes based upon a number of factors including age, gender, BMI and a variety of medical conditions and history which may have an impact on diabetes risk. The data we used is of unknown source in terms of country or year, or even if it's from a singular country or year. Supposedly it’s patient data, but some of the variables have very questionable categories that don’t seem to be very medically standard (ie, the smoking categories). The data seems to have been uploaded in 2023. 
+
+The question that our model addresses is how can doctors predict diabetes, which obviously has implications for prevention and early intervention. Jean Marx wrote in 2002 that a key predictor is obesity, and the explosion in obesity rates coincided with type 2 diabetes rates. There are a complex number of predictors, but fundamentally the actual condition of type 2 diabetes is the loss of the body’s ability to produce enough insulin or respond to it in order to control blood sugar levels, as Robinson and Turner wrote. When considering our model therefore there should be the thought process of whether or not variables are actually contributing to that process or are simply correlated with other variables either in or outside our model and thus appear to be contributing. 
+
+The packages we used are tidyverse, which includes many tools for data analysis, GGally, which is an extension to ggplot2, and broom is used to produce nice tibbles from statistical information.
 
 ```{r}
 # Upload the code pacakges here
@@ -224,7 +230,7 @@ cleaned_data %>%
 
 ```
 
-From the graph above, we can see that smoking history has 6 levels. This is somewhat substantial, and some levels have relatively low number of observations. These are some values to take notice for the model to see
+From the graph above, we can see that smoking history has 6 levels. This is somewhat substantial, and some levels have relatively low number of observations. These are some values to take notice for the model.
 
 ##### Feature Engineering
 
@@ -235,7 +241,7 @@ cleaned_data %>%
 
 ```
 
-Here we can see that evne if we wanted to remove the no info form our data set there is a substantial amount of points that may contribute to our models variance.
+Here we can see that even if we wanted to remove the no info column from our data set, there are a substantial amount of points that contribute to our models variance.
 
 ##### Summary Statistic
 
@@ -257,7 +263,9 @@ cleaned_data %>%
   ggpairs(columns = 1:ncol(cleaned_data), diag = "blankDiag", upper = list(continuous = "points"))
 ```
 
-##### Train/Test & Building Model
+The diabetes column has a well-disperse binary target , so it's a good fit for classification, and its correlations with features like BMI, level of HbA1c, and blood glucose present strong patterns for prediction.
+
+##### Train/Test & Building Modelg Model
 
 ```{r}
 set.seed(1234)
@@ -289,7 +297,7 @@ table(data_test$diabetes)
 # for the accuracy mentioned further down in reference
 ac <- mean(glm_pred == data_test$diabetes)
 
-tidy(glm_fit)
+tidy(glm_fit)lm_fit)
 ```
 
 ##### Assess Model Performance
@@ -304,9 +312,7 @@ summary(glm_fit)
 table(glm_pred, data_test$diabetes)
 ```
 
-The model is 96.4% accurate, which means it is right about most cases. However, its precision is only 37.4%, i.e., it often predicts diabetes when there isn't. The recall is 78.1%, which means that it correctly classifies most actual cases of diabetes but occasionally gets them wrong. While the model is fairly accurate, its low precision suggests that it may not be very effective in avoiding false positives.
-
-#### Notice in the above many of our smoking values have a high p value. We will factor those out to see if there is model improvement when we exclude those factors
+The model is 96.4% accurate, which means it is right about most cases. However, its precision is only 37.4%, i.e., it often predicts diabetes when th person does not have it. The recall is 78.1%, which means that it correctly classifies most actual cases of diabetes but occasionally gets them wrong. While the model is fairly accurate, its low precision suggests that it may not be very effective in avoiding false positives.
 
 #### Null Model
 
@@ -314,8 +320,11 @@ The model is 96.4% accurate, which means it is right about most cases.
 null_model <- glm(diabetes ~ 1, data = data_train, family = "binomial")
 
 # Check the summary of the null model
-summary(null_model)
+summary(null_mode
+        l)
 ```
+
+The null model only predicts diabetes based on the proportion in the data set, without using any features. Because our intercept is negative, it suggest the models info has less occurances of diabetes.
 
 #### Our Model
 
@@ -334,7 +343,7 @@ $$
 summary(glm_fit)
 ```
 
-The logistic regression mode shows a significant reduction in deviation from 22169, found from our null, to the 11961 in our residual deviance. This showcases the the predictors variable contribute meaningful explanations for the output. The AIC of 11989 suggest a reasonable ballance between the models complexity and fit. The model converged in 12 fisher scoring iteration, showcasing stable parameter estimation. These metric indicated the this is a well fitting model however, we can continue to asses
+The logistic regression mode shows a significant reduction in deviation from 22169, found from our null, to the 11961 in our residual deviance. This showcases the the predictors variable contribute meaningful explanations for the output. The AIC of 11,989 suggest a reasonable ballance between the models complexity and fit. The model converged in 12 fisher scoring iteration, showcasing stable parameter estimation. These metric indicated the this is a well fitting model however, we can continue to asses
 
 #### Model Comparison with Reduction in deviance
 
@@ -352,7 +361,7 @@ print(paste("BIC:", bic_value))
 
 ```
 
-assesses model fit while penalizing the complexity, where lower values indicate a good balance between accuracy and parsimony. If BIC decreased after removing unnecessary variables, the model is likely more efficient without decreasing the predictability. If BIC increased, significant predictors may have been removed, and the model may need to be re-checked on feature selection.
+Assesses model fit while analyzing complexity, where lower values indicate a good balance between accuracy and parsimony. If the BIC decreases after removing unnecessary variables, the model is likely more efficient without sacrificing predictability. If the BIC increases, significant predictors may have been removed, and the model may need to be re-checked for feature selection.
 
 ### Model evaluation and predictions
 
@@ -390,3 +399,10 @@ print(paste("Pseudo R-squared:", pseudo_r2))
 ```
 
 ### Conclusion/Summary
+
+### References
+
+Marx, Jean. “Unraveling the Causes of Diabetes.” Science 296, no. 5568 (2002): 686–89. http://www.jstor.org/stable/3076573.
+
+\
+Robinson, Matthew, and Caroline Turner. “Incidence and Prevalence of Type 2 Diabetes in America: Is There Culpability in the Food Industry?” State Crime Journal 8, no. 2 (2019): 175–218. https://doi.org/10.13169/statecrime.8.2.0175.

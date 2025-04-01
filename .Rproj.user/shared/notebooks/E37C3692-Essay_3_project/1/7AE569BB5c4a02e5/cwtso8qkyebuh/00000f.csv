@@ -1,6 +1,0 @@
-"0","bic_value <- BIC(glm_fit)"
-"0","print(paste(""BIC:"", bic_value))"
-"1","[1]"
-"1"," ""BIC: 12114.5283165497"""
-"1","
-"

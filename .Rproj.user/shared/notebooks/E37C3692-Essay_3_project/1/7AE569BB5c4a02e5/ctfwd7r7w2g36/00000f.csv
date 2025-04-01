@@ -1,7 +1,0 @@
-"0","# Boxplot for Age"
-"0","boxplot(cleaned_data$age, "
-"0","        main = ""Boxplot of Age"", "
-"0","        ylab = ""Age"", "
-"0","        col = ""blue"", "
-"0","        border = ""black"", "
-"0","        horizontal = FALSE)"

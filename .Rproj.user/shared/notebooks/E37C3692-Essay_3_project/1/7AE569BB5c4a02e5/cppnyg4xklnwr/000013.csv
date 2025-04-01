@@ -1,6 +1,0 @@
-"0",""
-"0","# Bar plot for SmokingHistory"
-"0","ggplot(cleaned_data, aes(x = factor(smoking_history))) +"
-"0","  geom_bar(fill = ""lightcoral"", color = ""black"") +"
-"0","  labs(title = ""Smoking History Distribution"", x = ""Smoking History (0 = Non-Smoker, 1 = Smoker)"", y = ""Count"") +"
-"0","  theme_minimal()"

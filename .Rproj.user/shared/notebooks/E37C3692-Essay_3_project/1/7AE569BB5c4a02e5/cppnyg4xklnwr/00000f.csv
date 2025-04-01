@@ -1,5 +1,0 @@
-"0","# Bar plot for Hypertension"
-"0","ggplot(cleaned_data, aes(x = factor(hypertension))) +"
-"0","  geom_bar(fill = ""lightblue"", color = ""black"") +"
-"0","  labs(title = ""Hypertension Distribution"", x = ""Hypertension (0 = No, 1 = Yes)"", y = ""Count"") +"
-"0","  theme_minimal()"
