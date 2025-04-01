@@ -399,7 +399,12 @@ print(paste("Pseudo R-squared:", pseudo_r2))
 ```
 
 ### Conclusion/Summary
-
+For this project, we created a logistic regression model designed to predict diabetes via various health factors. The data used in this experiment came from the Diabetes Prediction Dataset from Kaggle, which contains certain key explanatory variables, including gender, BMI, age, hypertensive status, history of heart disease, history of smoking, A1c levels, and blood glucose levels. 
+We began our analysis by first cleaning our data, via removing outliers and normalizing numerical variables to improve model accuracy. We then implemented our logistic regression to predict diabetes, and we evaluated our model's accuracy.
+Our model achieved a high accuracy of 96.8%, much higher than the model null accuracy that we found of .0009. Evaluation via examining residual deviance, AIC, a likelihood ratio test, and a pseudo R^2 test confirm the statistical value of our chosen model. 
+With regards to positive aspects of our project, we were able to correctly select predictors that do contribute to the high accuracy of our model. Diabetes can definitely be explained by our predictors, as shown via our verification methods. 
+With regards to the negative aspects of our project, we definitely had a pretty low precision of only about 37.4%, and our model does have an issue with avoiding false positives. Also, our data and subsequent model lacked many variables that could add greatly to our model, including socioeconomic variables, mental health variables, lifestyle variables, and genetic variables (predisposition to diabetes, other health risks). 
+Looking forward, our model could be improved by incorporation of those other diabetes-relevant variables. Our dataset was somewhat limited, and including more variables could definitely help us avoid type 1 error. 
 
 
 ### References
