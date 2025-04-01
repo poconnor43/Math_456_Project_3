@@ -6,11 +6,17 @@ editor: visual
 
 # Project Name
 
-## Preston O'Connor, Khoa Dao
+## Preston O'Connor, Khoa Dao, Anthony Yasan
 
 ### 4/1/2025
 
 ### Introduction
+
+The model predicts the incidence of diabetes based upon a number of factors including age, gender, BMI and a variety of medical conditions and history which may have an impact on diabetes risk. The data we used is of unknown source in terms of country or year, or even if it's from a singular country or year. Supposedly it’s patient data, but some of the variables have very questionable categories that don’t seem to be very medically standard (ie, the smoking categories). The data seems to have been uploaded in 2023. 
+
+The question that our model addresses is how can doctors predict diabetes, which obviously has implications for prevention and early intervention. Jean Marx wrote in 2002 that a key predictor is obesity, and the explosion in obesity rates coincided with type 2 diabetes rates. There are a complex number of predictors, but fundamentally the actual condition of type 2 diabetes is the loss of the body’s ability to produce enough insulin or respond to it in order to control blood sugar levels, as Robinson and Turner wrote. When considering our model therefore there should be the thought process of whether or not variables are actually contributing to that process or are simply correlated with other variables either in or outside our model and thus appear to be contributing. 
+
+The packages we used are tidyverse, which includes many tools for data analysis, GGally, which is an extension to ggplot2, and broom is used to produce nice tibbles from statistical information.
 
 ```{r}
 # Upload the code pacakges here
@@ -235,7 +241,7 @@ cleaned_data %>%
 
 ```
 
-Here we can see that evne if we wanted to remove the no info form our data set there is a substantial amount of points that may contribute to our models variance.
+Here we can see that even if we wanted to remove the no info from our data set there is a substantial amount of points that may contribute to our models variance.
 
 ##### Summary Statistic
 
@@ -391,7 +397,9 @@ print(paste("Pseudo R-squared:", pseudo_r2))
 
 ### Conclusion/Summary
 
+### References
 
+Marx, Jean. “Unraveling the Causes of Diabetes.” Science 296, no. 5568 (2002): 686–89. http://www.jstor.org/stable/3076573.
 
-
-### References 
+\
+Robinson, Matthew, and Caroline Turner. “Incidence and Prevalence of Type 2 Diabetes in America: Is There Culpability in the Food Industry?” State Crime Journal 8, no. 2 (2019): 175–218. https://doi.org/10.13169/statecrime.8.2.0175.
