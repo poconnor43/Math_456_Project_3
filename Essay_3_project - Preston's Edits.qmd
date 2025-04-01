@@ -1,12 +1,11 @@
 ---
-title: "Untitled"
+title: "Predicting Diabetes via health factors and logistic regression"
 format: pdf
 editor: visual
 ---
 
-# Project Name
 
-## Preston O'Connor, Khoa Dao, Anthony Yasan
+## Preston O'Connor, Khoa Dao, Anthony Yasan, Matthew Jacob
 
 ### 4/1/2025
 
