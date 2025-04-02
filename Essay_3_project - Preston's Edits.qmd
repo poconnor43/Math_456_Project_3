@@ -374,11 +374,15 @@ mean(glm_pred == data_test$diabetes)
 mean(null_model == data_test$diabetes)
 ```
 
+The full model obtained an accuracy of 96.85%, while the null models accuracy was only 0.098%. This indicates that the full model effectively predicts diabetes, whereas the null model performs no better than random guessing
+
 #### likelihood Ratio Test:
 
 ```{r}
 anova(null_model, glm_fit, test = "Chisq")
 ```
+
+The ANOVA test is used to determine whether the addition of predictors significantly improves the model's performance. The full model significantly improves diabetes prediction over our null model, from 22,169 to 11,961 residual deviance with a chi-square of 10,208 and a p value of <2.2e-16
 
 #### Pseudo R-Squared
 
@@ -391,6 +395,8 @@ full_logLik <- logLik(glm_fit)
 pseudo_r2 <- 1 - (as.numeric(full_logLik) / as.numeric(null_logLik))
 print(paste("Pseudo R-squared:", pseudo_r2))
 ```
+
+The pseudo R-squared of 0.4605 indicates that the full model explains about 46.05% of the variation we see with the diabetes outcomes compared to our null model. The value shows a moderately strong fit.
 
 ### Conclusion/Summary
 
