@@ -380,12 +380,6 @@ mean(null_model == data_test$diabetes)
 anova(null_model, glm_fit, test = "Chisq")
 ```
 
-#### AIC/BIC for model comparison
-
-```{r}
-
-```
-
 #### Pseudo R-Squared
 
 ```{r}
