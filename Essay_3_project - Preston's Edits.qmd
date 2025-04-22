@@ -1,12 +1,15 @@
 ---
 title: "Predicting Diabetes via health factors and logistic regression"
+header-includes:
+  \usepackage{fvextra}
+  \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
 format: pdf
 editor: visual
 ---
 
 ## Preston O'Connor, Khoa Dao, Anthony Yasan, Matthew Jacob
 
-### 4/1/2025
+### 4/22/2025
 
 ### Introduction
 
@@ -16,7 +19,7 @@ The question that our model addresses is how can doctors predict diabetes, which
 
 The packages we used are tidyverse, which includes many tools for data analysis, GGally, which is an extension to ggplot2, and broom is used to produce nice tibbles from statistical information.
 
-Our results indicated a high accuracy of 96.8%, meaning for 96.8% of those with diabetes it successfully predicted for them, but a low precision of 37.4%, originating from many false predictions. Again it is a difficult issue in medical research to identify the role some variables actually play and the extent to which they are independent of each other, which may have contributed to our low precision.
+Our results indicated a high accuracy of 96.8%, meaning for 96.8% of patients it successfully predicted whether or not they had diabetes, but a low precision of 37.4%, which suggests that a substantial number of individuals predicted to have diabetes did not. Again it is a difficult issue in medical research to identify the role some variables actually play and the extent to which they are independent of each other, which may have contributed to ou
 
 ```{r}
 # Upload the code pacakges here
@@ -71,6 +74,8 @@ summary(continuous)
 Hypertension, heart_disease, diabetes are all categorical. There is no need to standardize these values. We will standardize the rest of the following available categories
 
 #### Data Cleaning
+
+We clean and process the dataset by handling outliers and standardizing numeric variables to improve data quality for analysis. We first remove extreme values by setting the top 1% of each numeric column to `NA`. Then, we normalize numeric features by scaling them between 0 and 1. Categorical variables are converted into factors, and rows with missing numeric values are removed to maintain consistency. We then apply the **Interquartile Range (IQR) method**, filtering out rows where key health indicators—such as **age, BMI, blood glucose, and HbA1c levels**—fall outside an acceptable range. This should result in a cleaner dataset that minimizes statistical distortions.
 
 ```{r}
 #cleaned our continuous variables
@@ -265,7 +270,7 @@ cleaned_data %>%
 
 The diabetes column has a well-disperse binary target , so it's a good fit for classification, and its correlations with features like BMI, level of HbA1c, and blood glucose present strong patterns for prediction.
 
-##### Train/Test & Building Modelg Model
+##### Train/Test & Building Model
 
 ```{r}
 set.seed(1234)
@@ -297,7 +302,7 @@ table(data_test$diabetes)
 # for the accuracy mentioned further down in reference
 ac <- mean(glm_pred == data_test$diabetes)
 
-tidy(glm_fit)lm_fit)
+tidy(glm_fit)
 ```
 
 ##### Assess Model Performance
@@ -312,7 +317,7 @@ summary(glm_fit)
 table(glm_pred, data_test$diabetes)
 ```
 
-The model is 96.4% accurate, which means it is right about most cases. However, its precision is only 37.4%, i.e., it often predicts diabetes when th person does not have it. The recall is 78.1%, which means that it correctly classifies most actual cases of diabetes but occasionally gets them wrong. While the model is fairly accurate, its low precision suggests that it may not be very effective in avoiding false positives.
+The model is 96.4% accurate, which means it is right about most cases. However, its precision is only 37.4%, i.e., it often predicts diabetes when the person does not have it. The recall is 78.1%, which means that it correctly classifies most actual cases of diabetes but occasionally gets them wrong. While the model is fairly accurate, its low precision suggests that it may not be very effective in avoiding false positives.
 
 #### Null Model
 
@@ -320,8 +325,7 @@ The model is 96.4% accurate, which means it is right about most cases.
 null_model <- glm(diabetes ~ 1, data = data_train, family = "binomial")
 
 # Check the summary of the null model
-summary(null_mode
-        l)
+summary(null_model)
 ```
 
 The null model only predicts diabetes based on the proportion in the data set, without using any features. Because our intercept is negative, it suggest the models info has less occurances of diabetes.
@@ -332,12 +336,12 @@ The null model only predicts diabetes based on the proportion in the data set, w
 coefs <- coef(glm_fit)
 equation <- paste0("Logit(P(Y=1)) = ", round(coefs[1], 3), " + ", 
                    paste(names(coefs[-1]), round(coefs[-1], 3), sep = " * ", collapse = " + "))
-equation
+wrapped_equation <- strwrap(equation, width = 80)
+cat(wrapped_equation, sep = "\n")
+wrapped_equation
 ```
 
-$$
-\log \left( \frac{P(Y=1)}{1 - P(Y=1)} \right) = -15.416 + 0.223 \cdot \text{genderMale} - 9.779 \cdot \text{genderOther} + 3.739 \cdot \text{age} + 0.759 \cdot \text{hypertension1} + 0.87 \cdot \text{heart_disease1} - 0.502 \cdot \text{smoking\_historyNo\_Info} + 0.112 \cdot \text{smoking_historycurrent} + 0.135 \cdot \text{smoking_historyformer} + 0.153 \cdot \text{smoking_historyever} - 0.044 \cdot \text{smoking_historynot_current} + 4.109 \cdot \text{bmi} + 11.072 \cdot \text{HbA1c\_level} + 4.824 \cdot \text{blood\_glucose\_level}
-$$
+\\begin{align\*}\\log \\left( \\frac{P(Y=1)}{1 - P(Y=1)} \\right) &= -15.416 + 0.223 \\cdot \\text{genderMale} \\\\&\\quad - 9.779 \\cdot \\text{genderOther} + 3.739 \\cdot \\text{age} \\\\&\\quad + 0.759 \\cdot \\text{hypertension1} + 0.87 \\cdot \\text{heart\\\_disease1} \\\\&\\quad - 0.502 \\cdot \\text{smoking\\\_historyNo\\\_Info} + 0.112 \\cdot \\text{smoking\\\_historycurrent} \\\\&\\quad + 0.135 \\cdot \\text{smoking\\\_historyformer} + 0.153 \\cdot \\text{smoking\\\_historyever} \\\\&\\quad - 0.044 \\cdot \\text{smoking\\\_historynot\\\_current} + 4.109 \\cdot \\text{bmi} \\\\&\\quad + 11.072 \\cdot \\text{HbA1c\\\_level} + 4.824 \\cdot \\text{blood\\\_glucose\\\_level}\\end{align\*}
 
 ```{r}
 summary(glm_fit)
@@ -382,7 +386,7 @@ The full model obtained an accuracy of 96.85%, while the null models accuracy wa
 anova(null_model, glm_fit, test = "Chisq")
 ```
 
-The ANOVA test is used to determine whether the addition of predictors significantly improves the model's performance. The full model significantly improves diabetes prediction over our null model, from 22,169 to 11,961 residual deviance with a chi-square of 10,208 and a p value of <2.2e-16
+The ANOVA test is used to determine whether the addition of predictors significantly improves the model's performance. The full model significantly improves diabetes prediction over our null model, from 22,169 to 11,961 residual deviance with a chi-square of 10,208 and a p value of \<2.2e-16
 
 #### Pseudo R-Squared
 
